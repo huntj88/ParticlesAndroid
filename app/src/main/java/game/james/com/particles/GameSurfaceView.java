@@ -3,29 +3,37 @@ package game.james.com.particles;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 import java.util.ArrayList;
 
 import game.james.com.particles.gameobjects.GameObject;
+import game.james.com.particles.gameobjects.Particle;
 
-public class GameSurfaceView extends SurfaceView implements Runnable {
+public class GameSurfaceView extends SurfaceView implements Runnable,View.OnTouchListener {
     private boolean isRunning = false;
     private Thread gameThread;
     private SurfaceHolder holder;
 
-    private int screenWidth;
-    private int screenHeight;
+    public static int screenWidth;
+    public static int screenHeight;
+    private int touchX,touchY;
 
     //private Sprite[] sprites;
     private ArrayList<GameObject> gameObjects = new ArrayList<>();
+    private ArrayList<Particle> particles = new ArrayList<>();
 
     private final static int MAX_FPS = 40; //desired fps
     private final static int FRAME_PERIOD = 1000 / MAX_FPS; // the frame period
 
     public GameSurfaceView(Context context) {
         super(context);
+
+        setOnTouchListener(this);
 
         holder = getHolder();
         holder.addCallback(new SurfaceHolder.Callback() {
@@ -37,6 +45,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                 screenWidth = width;
                 screenHeight = height;
+                spawn(1000);
             }
 
             @Override
@@ -46,6 +55,13 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
         gameObjects.add(new GameObject(100,100,100));
     }
+
+    public void spawn(int amount)
+    {
+        for(int i = 0;i<amount;i++)
+            particles.add(new Particle((int)(Math.random()*screenWidth),(int)(Math.random()*screenHeight),(int)(Math.random()*Math.random()*Math.random()*5)+3));
+    }
+
 
     /**
      * Start or resume the game.
@@ -72,69 +88,24 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
         }
     }
 
-  /*class Sprite {
-    int x;
-    int y;
-    int directionX = 1;
-    int directionY = 1;
-    int speed = 10;
-    int color = 0;
-    Bitmap image;
-
-    public Sprite(int x, int y) {
-      this.x = x;
-      this.y = y;
-    }
-
-    public Sprite(int x, int y, Bitmap image) {
-      this(x, y);
-      this.image = image;
-    }
-
-    public Sprite(int x, int y, Bitmap image, int color) {
-      this(x, y, image);
-      this.color = color;
-    }
-  }*/
-
-  /*protected void step() {
-    for (int index = 0, length = sprites.length; index < length; index++) {
-      Sprite sprite = sprites[index];
-
-      if ((sprite.x < 0) || ((sprite.x + sprite.image.getWidth()) > screenWidth)) {
-        sprite.directionX *= -1;
-      }
-      if ((sprite.y < 0) || ((sprite.y + sprite.image.getHeight()) > screenHeight)) {
-        sprite.directionY *= -1;
-      }
-
-      Rect current = new Rect(sprite.x, sprite.y,
-                              sprite.x + sprite.image.getWidth(),
-                              sprite.y + sprite.image.getHeight());
-      for (int subindex = 0; subindex < length; subindex++) {
-        if (subindex != index) {
-          Sprite subsprite = sprites[subindex];
-          Rect other = new Rect(subsprite.x, subsprite.y,
-                                subsprite.x + subsprite.image.getWidth(),
-                                subsprite.y + subsprite.image.getHeight());
-          if (Rect.intersects(current, other)) {
-            // Poor physics implementation.
-            sprite.directionX *= -1;
-            sprite.directionY *= -1;
-          }
-        }
-      }
-
-      sprite.x += (sprite.directionX * sprite.speed);
-      sprite.y += (sprite.directionY * sprite.speed);
-    }
-  }*/
-
     protected void step()
     {
         for(int i=0;i<gameObjects.size();i++)
         {
             gameObjects.get(i).step();
+        }
+        calculateParticleMoves();
+        Log.d("num particles",": "+particles.size());
+    }
+
+    public void calculateParticleMoves()
+    {
+        /*for (Particle p : particles)
+            p.move(mouseX,mouseY);*/
+
+        for(int i = 0;i<particles.size();i++)
+        {
+            particles.get(i).move(touchX,touchY);
         }
     }
 
@@ -158,6 +129,14 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
         for (int index = 0; index < gameObjects.size(); index++) {
             gameObjects.get(index).drawGameObject(canvas);
         }
+
+        drawParticles(canvas);
+    }
+
+    public void drawParticles(Canvas g)
+    {
+        for(int i=0;i<particles.size();i++)
+            particles.get(i).drawParticle(g);
     }
 
     @Override
@@ -192,5 +171,12 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
                 sleepTime += FRAME_PERIOD;
             }
         }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        touchX=(int)event.getX();
+        touchY=(int)event.getY();
+        return false;
     }
 }
