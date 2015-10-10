@@ -43,7 +43,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
             public void surfaceDestroyed(SurfaceHolder holder) {
             }
         });
-        
+
         gameObjects.add(new GameObject(100,100,100));
     }
 

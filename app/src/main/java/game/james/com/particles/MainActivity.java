@@ -1,20 +1,13 @@
 package game.james.com.particles;
 
+import android.app.Activity;
 import android.graphics.Point;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Display;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
     protected GameSurfaceView gameView;
 
     @Override
