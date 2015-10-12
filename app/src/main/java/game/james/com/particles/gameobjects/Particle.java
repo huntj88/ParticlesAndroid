@@ -21,10 +21,10 @@ public class Particle {
     private double mathX,mathY;
     private int size;
     private double xSpeed,ySpeed;
-    private double gravity=10;
+    private double gravity=5;
     private Paint paint = new Paint();
     private ParticleTrail trail;
-    private int maxSpeed=3;
+    private int maxSpeed=30;
     private RectF rect = new RectF();
 
     public Particle(int x, int y,int size)

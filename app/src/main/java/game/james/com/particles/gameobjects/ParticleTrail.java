@@ -29,10 +29,10 @@ public class ParticleTrail {
         this.yLength=yLength;
     }
 
-    public void drawParticleTrail(Canvas g)
+    public void drawParticleTrail(Canvas canvas)
     {
-        /*if(xLength!=0) {
-            Graphics2D g2d = (Graphics2D) g.create();
+        if(xLength!=0) {
+            /*Graphics2D g2d = (Graphics2D) g.create();
             //Rectangle rect2 = new Rectangle(x, y, (int) Math.sqrt(xLength * xLength + yLength * yLength)*38, size);
             double angle = Math.atan(yLength / xLength);
 
@@ -44,8 +44,14 @@ public class ParticleTrail {
             //g2d.draw(rect2);
             //g2d.fill(rect2);
             g2d.fillOval(x, y, (int) (Math.sqrt(xLength * xLength + yLength * yLength)*size/3), size);
-            g2d.dispose();
-        }*/
+            g2d.dispose();*/
+
+            canvas.save();
+            double angle = Math.atan(yLength / xLength);
+            canvas.rotate((float)Math.toDegrees(angle),x+size/2,y+size/2);
+            canvas.drawRect(x, y, x+(int) (Math.sqrt(xLength * xLength + yLength * yLength)*size/1.5), y+size,paint);
+            canvas.restore();
+        }
     }
 
 }

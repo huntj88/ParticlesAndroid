@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import game.james.com.particles.gameobjects.GameObject;
 import game.james.com.particles.gameobjects.Particle;
 
-public class GameSurfaceView extends SurfaceView implements Runnable,View.OnTouchListener {
+public class GameSurfaceView extends SurfaceView implements Runnable{
     private boolean isRunning = false;
     private Thread gameThread;
     private SurfaceHolder holder;
@@ -33,8 +33,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable,View.OnTouc
     public GameSurfaceView(Context context) {
         super(context);
 
-        setOnTouchListener(this);
-
         holder = getHolder();
         holder.addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -45,6 +43,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable,View.OnTouc
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                 screenWidth = width;
                 screenHeight = height;
+                touchX=width/2;
+                touchY=height/2;
                 spawn(1000);
             }
 
@@ -88,14 +88,20 @@ public class GameSurfaceView extends SurfaceView implements Runnable,View.OnTouc
         }
     }
 
+    public void updateTouch(int x,int y)
+    {
+        touchX=x;
+        touchY=y;
+    }
+
     protected void step()
     {
-        for(int i=0;i<gameObjects.size();i++)
+        /*for(int i=0;i<gameObjects.size();i++)
         {
             gameObjects.get(i).step();
-        }
+        }*/
         calculateParticleMoves();
-        Log.d("num particles",": "+particles.size());
+        //Log.d("num particles",": "+particles.size());
     }
 
     public void calculateParticleMoves()
@@ -109,26 +115,12 @@ public class GameSurfaceView extends SurfaceView implements Runnable,View.OnTouc
         }
     }
 
-  /*protected void render(Canvas canvas) {
-    canvas.drawColor(Color.BLACK);
-    for (int index = 0, length = sprites.length; index < length; index++) {
-      Paint p = null;
-      if (sprites[index].color != 0) {
-        p = new Paint();
-        ColorFilter filter = new LightingColorFilter(sprites[index].color, 0);
-        p.setColorFilter(filter);
-      }
-
-      canvas.drawBitmap(sprites[index].image, sprites[index].x, sprites[index].y, p);
-    }
-  }*/
-
 
     protected void render(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
-        for (int index = 0; index < gameObjects.size(); index++) {
+        /*for (int index = 0; index < gameObjects.size(); index++) {
             gameObjects.get(index).drawGameObject(canvas);
-        }
+        }*/
 
         drawParticles(canvas);
     }
@@ -171,12 +163,5 @@ public class GameSurfaceView extends SurfaceView implements Runnable,View.OnTouc
                 sleepTime += FRAME_PERIOD;
             }
         }
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        touchX=(int)event.getX();
-        touchY=(int)event.getY();
-        return false;
     }
 }
